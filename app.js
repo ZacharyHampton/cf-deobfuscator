@@ -4,6 +4,8 @@ const parser = require("@babel/parser");
 const generate = require("@babel/generator").default;
 const traverse = require("@babel/traverse").default;
 const beautify = require("js-beautify");
+const { getStringData } = require("./transformers/strings");
+const { removeProxyAssignments } = require("./transformers/proxy_assignments");
 
 function writeCodeToFile(code) {
     let outputPath = `data/output/${Date.now().toString()}.js`;
@@ -20,14 +22,16 @@ function deobfuscate(sourceCode) {
     const ast = parser.parse(sourceCode);
 
     // traverse ast here
+    let stringData = getStringData(ast);
+    removeProxyAssignments(ast);
 
-    let deobfCode = generate(ast, { comments: false }).code;
-    deobfCode = beautify(deobfCode, {
+    let deobfuscatedSource = generate(ast, { comments: false }).code;
+    deobfuscatedSource = beautify(deobfuscatedSource, {
         indent_size: 2,
         space_in_empty_paren: true,
     });
 
-    return deobfCode;
+    return deobfuscatedSource;
 }
 
 program
@@ -35,7 +39,7 @@ program
     .usage('[OPTIONS]...')
     .option('-f, --file <file>', 'Specify file to deobfuscate.')
     .parse(process.argv)
-    .action((method, options) => {
+    .action((options) => {
         if (options.file) {
             fs.readFile(options.file, "utf8", (err, data) => {
                 if (err) {

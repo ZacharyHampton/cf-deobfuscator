@@ -2,9 +2,9 @@
   "name": "cf-deobfuscator",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "node app.js -f data/input/input.js"
   },
   "keywords": [],
   "author": "",
@@ -13,8 +13,10 @@
     "@babel/generator": "^7.24.1",
     "@babel/parser": "^7.24.1",
     "@babel/traverse": "^7.24.1",
+    "@babel/types": "^7.24.0",
     "babel": "^6.23.0",
     "commander": "^12.0.0",
+    "dataclass": "^2.1.1",
     "js-beautify": "^1.15.1"
   }
 }
