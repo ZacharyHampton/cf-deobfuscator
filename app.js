@@ -1,10 +1,9 @@
 const fs = require("fs");
-const { program, Argument} = require('commander');
+const { program} = require('commander');
 const parser = require("@babel/parser");
 const generate = require("@babel/generator").default;
-const traverse = require("@babel/traverse").default;
 const beautify = require("js-beautify");
-const { getStringData } = require("./transformers/strings");
+const { getStringData, replaceBCalls, shuffleStrings } = require("./transformers/strings");
 const { removeProxyAssignments } = require("./transformers/proxy_assignments");
 
 function writeCodeToFile(code) {
@@ -24,6 +23,10 @@ function deobfuscate(sourceCode) {
     // traverse ast here
     let stringData = getStringData(ast);
     removeProxyAssignments(ast);
+
+    stringData = shuffleStrings(ast, stringData);
+
+    replaceBCalls(ast, stringData);
 
     let deobfuscatedSource = generate(ast, { comments: false }).code;
     deobfuscatedSource = beautify(deobfuscatedSource, {

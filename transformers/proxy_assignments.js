@@ -29,16 +29,6 @@ const traverse = require("@babel/traverse").default;
 //                 },
 
 
-function getTrueType(path, name) {
-    const result = path.scope.getBinding(name);
-
-    if (result && result.path.node.type === "Identifier") {
-        return getTrueType(result.path, result.path.node.name)
-    } else {
-        return result.path.node;
-    }
-}
-
 function removeProxyAssignments(ast) {
     traverse(ast, {
         AssignmentExpression(path) {
